@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FICTITIOUS invoice for tests (simplified Peruvian UBL 2.1, no digital signature) -->
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:ID>F001-00000245</cbc:ID>
+  <cbc:IssueDate>2026-11-10</cbc:IssueDate>
+  <cbc:InvoiceTypeCode listID="0101">01</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode>PEN</cbc:DocumentCurrencyCode>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification><cbc:ID schemeID="6">20555555556</cbc:ID></cac:PartyIdentification>
+      <cac:PartyLegalEntity><cbc:RegistrationName>ANDES DEMO SUPPLY S.A.C.</cbc:RegistrationName></cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification><cbc:ID schemeID="6">20601234565</cbc:ID></cac:PartyIdentification>
+      <cac:PartyLegalEntity><cbc:RegistrationName>DEMO BUYER S.A.C.</cbc:RegistrationName></cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="PEN">90.00</cbc:TaxAmount>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="PEN">500.00</cbc:LineExtensionAmount>
+    <cbc:PayableAmount currencyID="PEN">590.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="NIU">10</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="PEN">300.00</cbc:LineExtensionAmount>
+    <cac:Item><cbc:Description>A4 PAPER X 500 SHEETS</cbc:Description></cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="PEN">30.00</cbc:PriceAmount></cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="NIU">4</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="PEN">200.00</cbc:LineExtensionAmount>
+    <cac:Item><cbc:Description>LASER PRINTER TONER</cbc:Description></cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="PEN">50.00</cbc:PriceAmount></cac:Price>
+  </cac:InvoiceLine>
+</Invoice>

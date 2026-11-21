@@ -1,0 +1,2 @@
+# Packaged into the Lambda functions (boto3 already ships with the AWS runtime)
+openpyxl==3.1.5

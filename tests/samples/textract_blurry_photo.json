@@ -1,0 +1,100 @@
+{
+  "ExpenseDocuments": [
+    {
+      "ExpenseIndex": 1,
+      "SummaryFields": [
+        {
+          "Type": {
+            "Text": "VENDOR_NAME",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "FERRETERIA EL PERNO DEMO",
+            "Confidence": 95
+          }
+        },
+        {
+          "Type": {
+            "Text": "OTHER",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "20555555551",
+            "Confidence": 71.5
+          },
+          "LabelDetection": {
+            "Text": "RUC",
+            "Confidence": 71.5
+          }
+        },
+        {
+          "Type": {
+            "Text": "INVOICE_RECEIPT_ID",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "F001 - 9921",
+            "Confidence": 93
+          },
+          "LabelDetection": {
+            "Text": "FACTURA ELECTRONICA",
+            "Confidence": 93
+          }
+        },
+        {
+          "Type": {
+            "Text": "INVOICE_RECEIPT_DATE",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "03 NOV 2026",
+            "Confidence": 97
+          }
+        },
+        {
+          "Type": {
+            "Text": "SUBTOTAL",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "254.24",
+            "Confidence": 96
+          },
+          "LabelDetection": {
+            "Text": "OP. GRAVADA",
+            "Confidence": 96
+          }
+        },
+        {
+          "Type": {
+            "Text": "TAX",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "45.76",
+            "Confidence": 96
+          },
+          "LabelDetection": {
+            "Text": "IGV",
+            "Confidence": 96
+          }
+        },
+        {
+          "Type": {
+            "Text": "TOTAL",
+            "Confidence": 99.0
+          },
+          "ValueDetection": {
+            "Text": "S/ 310.00",
+            "Confidence": 88
+          },
+          "LabelDetection": {
+            "Text": "TOTAL A PAGAR",
+            "Confidence": 88
+          }
+        }
+      ],
+      "LineItemGroups": []
+    }
+  ]
+}
