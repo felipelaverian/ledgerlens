@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
@@ -7,10 +8,21 @@ from ledgerlens.normalize import clean_tax_id, detect_currency, doc_type_from_la
 
 @pytest.mark.parametrize(
     ("text", "expected"),
-    [("S/ 1,180.00", 1180.0), ("1.180,00", 1180.0), ("1180", 1180.0), ("€ 12,5", 12.5), ("-45.10", -45.1)],
+    [
+        ("S/ 1,180.00", Decimal("1180.00")),
+        ("1.180,00", Decimal("1180.00")),
+        ("1180", Decimal("1180.00")),
+        ("€ 12,5", Decimal("12.50")),
+        ("-45.10", Decimal("-45.10")),
+    ],
 )
 def test_parse_amount(text, expected):
     assert parse_amount(text) == expected
+
+
+def test_parse_amount_is_exact():
+    assert parse_amount("0.10") + parse_amount("0.20") == Decimal("0.30")
+    assert str(parse_amount("590")) == "590.00"
 
 
 def test_parse_amount_without_digits_returns_none():

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from datetime import date
+from decimal import Decimal
 from enum import StrEnum
 
 
@@ -28,9 +29,9 @@ class Issue:
 @dataclass
 class LineItem:
     description: str
-    quantity: float | None = None
-    unit_price: float | None = None
-    amount: float | None = None
+    quantity: Decimal | None = None
+    unit_price: Decimal | None = None
+    amount: Decimal | None = None
 
 
 @dataclass
@@ -44,9 +45,9 @@ class Document:
     vendor_name: str | None = None
     vendor_tax_id: str | None = None
     buyer_tax_id: str | None = None
-    subtotal: float | None = None
-    tax: float | None = None
-    total: float | None = None
+    subtotal: Decimal | None = None
+    tax: Decimal | None = None
+    total: Decimal | None = None
     line_items: list[LineItem] = field(default_factory=list)
     source: str = "unknown"                # ubl_xml | textract
     file_name: str | None = None
@@ -61,7 +62,19 @@ class Document:
         data = asdict(self)
         data["status"] = self.status.value
         data["issue_date"] = self.issue_date.isoformat() if self.issue_date else None
+        # Money travels as strings: exact in JSON/CSV, and DynamoDB rejects Python floats.
+        for name in ("subtotal", "tax", "total"):
+            data[name] = _money(data[name])
+        data["line_items"] = [
+            {key: value if key == "description" else _money(value) for key, value in line.items()}
+            for line in data["line_items"]
+        ]
+        data["confidence"] = {name: str(round(value, 1)) for name, value in self.confidence.items()}
         data["issues"] = [
             {"field": i.field, "message": i.message, "severity": i.severity.value} for i in self.issues
         ]
         return data
+
+
+def _money(value: Decimal | None) -> str | None:
+    return str(value) if value is not None else None

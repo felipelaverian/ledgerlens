@@ -8,6 +8,7 @@ no OCR is needed: the data is exact and free to read. Standard library only.
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
+from decimal import Decimal
 
 from .models import Document, LineItem
 from .normalize import parse_date
@@ -43,8 +44,8 @@ def _text(node: ET.Element | None, *paths: str) -> str | None:
     return None
 
 
-def _amount(value: str | None) -> float | None:
-    return round(float(value), 2) if value else None
+def _amount(value: str | None) -> Decimal | None:
+    return Decimal(value).quantize(Decimal("0.01")) if value else None
 
 
 def parse_ubl(xml_bytes: bytes, file_name: str | None = None) -> Document:

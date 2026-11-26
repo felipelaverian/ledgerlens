@@ -40,3 +40,13 @@ def test_xlsx_export_is_a_zip_file(samples):
     repo = InMemoryRepository()
     process((samples / "ubl_invoice_pe.xml").read_bytes(), "ubl_invoice_pe.xml", repo)
     assert to_xlsx(repo.all())[:2] == b"PK"
+
+
+def test_stored_items_have_no_floats(samples):
+    """DynamoDB rejects Python floats, so nothing in to_dict() may be a float."""
+    repo = InMemoryRepository()
+    process((samples / "textract_invoice_pe.json").read_bytes(), "textract_invoice_pe.json", repo)
+    item = repo.all()[0]
+    assert item["total"] == "1180.00"
+    assert item["line_items"][0]["amount"] == "1000.00"
+    assert not any(isinstance(value, float) for value in item["confidence"].values())

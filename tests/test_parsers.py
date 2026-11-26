@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
@@ -16,7 +17,7 @@ def test_peruvian_ubl_invoice(samples):
     assert doc.currency == "PEN"
     assert doc.vendor_tax_id == "20555555556"
     assert doc.buyer_tax_id == "20601234565"
-    assert (doc.subtotal, doc.tax, doc.total) == (500.0, 90.0, 590.0)
+    assert (doc.subtotal, doc.tax, doc.total) == (Decimal("500.00"), Decimal("90.00"), Decimal("590.00"))
     assert len(doc.line_items) == 2
 
 
@@ -26,7 +27,7 @@ def test_peppol_ubl_invoice(samples):
     assert doc.vendor_name == "Iberia Demo Consulting"
     assert doc.vendor_tax_id == "ESB12345674"
     assert doc.currency == "EUR"
-    assert (doc.subtotal, doc.tax, doc.total) == (1000.0, 210.0, 1210.0)
+    assert (doc.subtotal, doc.tax, doc.total) == (Decimal("1000.00"), Decimal("210.00"), Decimal("1210.00"))
     assert doc.line_items[0].description == "Cloud architecture consulting"
 
 
@@ -41,7 +42,7 @@ def test_textract_invoice(samples):
     assert doc.doc_type == "INVOICE"
     assert doc.vendor_tax_id == "20555555556"
     assert doc.currency == "PEN"
-    assert (doc.subtotal, doc.tax, doc.total) == (1000.0, 180.0, 1180.0)
+    assert (doc.subtotal, doc.tax, doc.total) == (Decimal("1000.00"), Decimal("180.00"), Decimal("1180.00"))
     assert len(doc.line_items) == 1
 
 

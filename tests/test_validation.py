@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from ledgerlens.models import Document, Severity, Status
 from ledgerlens.validation import Rules, validate
@@ -9,7 +10,7 @@ TODAY = date(2026, 11, 21)
 def _doc(**changes) -> Document:
     values = dict(
         doc_type="INVOICE", number="F001-1", issue_date=date(2026, 11, 10), currency="PEN",
-        vendor_tax_id="20555555556", subtotal=100.0, tax=18.0, total=118.0,
+        vendor_tax_id="20555555556", subtotal=Decimal("100.00"), tax=Decimal("18.00"), total=Decimal("118.00"),
     )
     values.update(changes)
     return Document(**values)
@@ -26,12 +27,12 @@ def test_missing_required_field_needs_review():
 
 
 def test_totals_that_do_not_add_up_need_review():
-    doc = validate(_doc(total=130.0), today=TODAY)
+    doc = validate(_doc(total=Decimal("130.00")), today=TODAY)
     assert doc.status == Status.NEEDS_REVIEW
 
 
 def test_unexpected_tax_rate_is_only_a_warning():
-    doc = validate(_doc(tax=10.0, total=110.0), today=TODAY)
+    doc = validate(_doc(tax=Decimal("10.00"), total=Decimal("110.00")), today=TODAY)
     assert doc.status == Status.APPROVED
     assert [i.severity for i in doc.issues] == [Severity.WARNING]
 

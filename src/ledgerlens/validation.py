@@ -4,17 +4,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, timedelta
+from decimal import Decimal
 
 from .models import Document, Issue, Severity, Status
 
-TAX_RATE = 0.18  # TODO: only right for a few countries, make it configurable
+TAX_RATE = Decimal("0.18")  # TODO: only right for a few countries, make it configurable
 REQUIRED_FIELDS = ("vendor_tax_id", "number", "issue_date", "total")
 
 
 @dataclass
 class Rules:
     confidence_threshold: float = 90.0
-    tolerance: float = 0.05             # accepted rounding difference
+    tolerance: Decimal = Decimal("0.05")             # accepted rounding difference
     max_age_days: int = 365
     company_tax_id: str | None = None   # tax ID of the company receiving the documents
 
@@ -38,7 +39,7 @@ def validate(doc: Document, rules: Rules | None = None, today: date | None = Non
     if doc.total is not None and doc.total <= 0 and doc.doc_type != "CREDIT_NOTE":
         issues.append(Issue("total", "Total is zero or negative"))
     if doc.subtotal is not None and doc.tax is not None:
-        expected_tax = round(doc.subtotal * TAX_RATE, 2)
+        expected_tax = (doc.subtotal * TAX_RATE).quantize(Decimal("0.01"))
         if abs(expected_tax - doc.tax) > rules.tolerance:
             # Can be legitimate (exempt items, reduced rate), so only a warning
             issues.append(Issue("tax", f"Tax {doc.tax} is not {TAX_RATE:.0%} of the subtotal", Severity.WARNING))

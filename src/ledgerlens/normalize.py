@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
 
 # Longest symbols first, so "US$" wins over "$". A bare "$" is ambiguous (USD, MXN, CLP...) and is ignored.
 _CURRENCIES = {
@@ -33,8 +34,10 @@ def detect_currency(text: str | None, default: str | None = None) -> str | None:
     return default
 
 
-def parse_amount(text: str | None) -> float | None:
-    """Turn 'S/ 1,180.00', '1.180,00' or '1180' into 1180.0.
+def parse_amount(text: str | None) -> Decimal | None:
+    """Turn 'S/ 1,180.00', '1.180,00' or '1180' into Decimal('1180.00').
+
+    Money is never a float: 0.1 + 0.2 must be exactly 0.3.
 
     Rule: the last separator ('.' or ',') followed by one or two digits is the decimal mark.
     """
@@ -52,8 +55,8 @@ def parse_amount(text: str | None) -> float | None:
     else:
         cleaned = re.sub(r"[.,]", "", cleaned)
     try:
-        value = round(float(cleaned), 2)
-    except ValueError:
+        value = Decimal(cleaned).quantize(Decimal("0.01"))
+    except InvalidOperation:
         return None
     return -value if negative else value
 
