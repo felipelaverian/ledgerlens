@@ -8,6 +8,7 @@
    - **UBL XML** (`ubl_parser.py`): exact data, no OCR cost. Works with Peppol e-invoices and national UBL systems.
    - **PDF / image** (`textract_parser.py`): Amazon Textract `AnalyzeExpense`.
 4. `validation.py` checks required fields, totals, dates and OCR confidence, and sets the status.
+   Country rules (tax rates, tax ID check digits) come from a profile in `countries.py`.
 5. The result is stored in DynamoDB (`repository.py`).
 
 ## Why this shape

@@ -22,6 +22,7 @@ _ocr = TextractReader()
 _rules = Rules(
     confidence_threshold=float(os.environ.get("CONFIDENCE_THRESHOLD", "90")),
     company_tax_id=os.environ.get("COMPANY_TAX_ID") or None,
+    country=os.environ.get("COUNTRY", "GENERIC"),
 )
 
 

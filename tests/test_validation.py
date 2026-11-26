@@ -32,7 +32,7 @@ def test_totals_that_do_not_add_up_need_review():
 
 
 def test_unexpected_tax_rate_is_only_a_warning():
-    doc = validate(_doc(tax=Decimal("10.00"), total=Decimal("110.00")), today=TODAY)
+    doc = validate(_doc(tax=Decimal("5.00"), total=Decimal("105.00")), Rules(country="PE"), today=TODAY)
     assert doc.status == Status.APPROVED
     assert [i.severity for i in doc.issues] == [Severity.WARNING]
 
@@ -51,3 +51,19 @@ def test_document_for_another_company_needs_review():
     rules = Rules(company_tax_id="20601234565")
     doc = validate(_doc(buyer_tax_id="20999999999"), rules, today=TODAY)
     assert doc.status == Status.NEEDS_REVIEW
+
+
+def test_generic_profile_does_not_check_tax_rate():
+    doc = validate(_doc(tax=Decimal("5.00"), total=Decimal("105.00")), today=TODAY)
+    assert doc.issues == []
+
+
+def test_spanish_vat_is_accepted_with_spanish_rules():
+    doc = _doc(currency="EUR", vendor_tax_id="ESB12345674", tax=Decimal("21.00"), total=Decimal("121.00"))
+    assert validate(doc, Rules(country="ES"), today=TODAY).issues == []
+
+
+def test_invalid_ruc_needs_review_in_peru():
+    doc = validate(_doc(vendor_tax_id="20555555551"), Rules(country="PE"), today=TODAY)
+    assert doc.status == Status.NEEDS_REVIEW
+    assert "invalid check digit" in doc.issues[0].message

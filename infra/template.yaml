@@ -5,6 +5,11 @@ Description: >
   Fully serverless: nothing runs while idle, you pay per processed document.
 
 Parameters:
+  Country:
+    Type: String
+    Default: GENERIC
+    AllowedValues: [GENERIC, PE, CL, ES]
+    Description: Tax rules to apply (see src/ledgerlens/countries.py)
   CompanyTaxId:
     Type: String
     Default: ""
@@ -45,6 +50,7 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DocumentsTable
           COMPANY_TAX_ID: !Ref CompanyTaxId
+          COUNTRY: !Ref Country
           CONFIDENCE_THRESHOLD: !Ref ConfidenceThreshold
       Policies:
         - AmazonS3FullAccess

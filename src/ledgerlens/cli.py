@@ -6,6 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from .countries import PROFILES
 from .export import to_csv, to_xlsx
 from .extract import IMAGE_EXTENSIONS, TextractReader
 from .models import Status
@@ -27,6 +28,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("path", type=Path, help="file or folder with documents")
     parser.add_argument("--output", type=Path, default=Path("ledger.xlsx"), help=".xlsx or .csv")
     parser.add_argument("--textract", action="store_true", help="read PDFs and images with Amazon Textract")
+    parser.add_argument(
+        "--country", default="GENERIC", type=str.upper, choices=sorted(PROFILES), help="tax rules to apply"
+    )
     parser.add_argument("--company-tax-id", help="check that documents are addressed to this tax ID")
     parser.add_argument("--confidence", type=float, default=90.0, help="minimum OCR confidence (0-100)")
     args = parser.parse_args(argv)
@@ -36,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     repo = InMemoryRepository()
-    rules = Rules(confidence_threshold=args.confidence, company_tax_id=args.company_tax_id)
+    rules = Rules(confidence_threshold=args.confidence, company_tax_id=args.company_tax_id, country=args.country)
     ocr = TextractReader() if args.textract else None
 
     print(f"{'File':<32} {'Number':<16} {'Total':>14}  Status")

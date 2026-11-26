@@ -14,7 +14,7 @@ Typing invoices by hand is slow, expensive and error-prone. Commercial tools sol
 | --- | --- |
 | 1. Receive | A file is uploaded to S3 |
 | 2. Read | **UBL XML** (Peppol and national e-invoicing) → exact and free · **PDF/photo** → Amazon Textract `AnalyzeExpense` |
-| 3. Validate | Required fields, subtotal + tax = total, tax rate, dates, buyer tax ID, OCR confidence |
+| 3. Validate | Required fields, subtotal + tax = total, country tax rates and tax ID check digits, dates, buyer tax ID, OCR confidence |
 | 4. Decide | `APPROVED`, `NEEDS_REVIEW` (with the reason) or `REJECTED` |
 | 5. Export | Excel or CSV ledger; documents that need review are highlighted |
 
@@ -42,6 +42,7 @@ ledgerlens/
 │   ├── textract_parser.py  # Textract AnalyzeExpense response -> Document
 │   ├── extract.py          # picks XML or Textract per file
 │   ├── validation.py       # business rules
+│   ├── countries.py        # per-country tax rates and tax ID checks
 │   ├── pipeline.py         # orchestration
 │   ├── repository.py       # DynamoDB and in-memory storage
 │   ├── export.py           # CSV and Excel
@@ -63,6 +64,23 @@ pip install -e ".[dev]"
 pytest
 ledgerlens tests/samples/ --output ledger.xlsx
 ```
+
+### Country rules
+
+Tax rates and tax ID formats change per country, so they live in [`countries.py`](src/ledgerlens/countries.py). Pick one with `--country`:
+
+| Code | Country | Tax rates checked | Tax ID check digit |
+| --- | --- | --- | --- |
+| `GENERIC` (default) | Any | none | none |
+| `PE` | Peru | IGV 18 %, 10 % | RUC |
+| `CL` | Chile | IVA 19 % | RUT |
+| `ES` | Spain | IVA 21 %, 10 %, 4 % | none yet |
+
+```bash
+ledgerlens tests/samples/ --country PE
+```
+
+Adding a country is one new `CountryProfile`; the validation code does not change.
 
 To read real PDFs or photos with Textract (needs AWS credentials):
 
@@ -89,7 +107,7 @@ Upload a document to `s3://<Bucket output>/inbox/` and check the DynamoDB table.
 - [x] UBL XML and Textract readers
 - [x] Validation rules and statuses
 - [x] Excel and CSV export
-- [ ] Country-specific rules (tax ID check digits, tax rates)
+- [x] Country-specific rules (tax ID check digits, tax rates)
 - [ ] Duplicate detection
 - [ ] Least-privilege IAM and encrypted storage
 - [ ] Continuous integration
